@@ -1,12 +1,21 @@
 {
-  "version": 1,
-  "description": "Structured routing rules for CoPaw-integrated Vibe skills",
+  "version": 2,
+  "description": "Structured routing rules for CoPaw-integrated Vibe skills with aliases, negative rules, intent boosts, and explainable output",
+  "aliases": {
+    "review": ["审查", "审一下", "代码审查", "检查改动"],
+    "debug": ["排障", "定位问题", "查问题", "修报错"],
+    "plan": ["方案", "计划", "实施路径", "roadmap"],
+    "clarify": ["理清需求", "需求澄清", "冻结范围", "我还没想清楚"],
+    "build": ["开发", "实现", "构建", "推进", "做完"]
+  },
   "layers": {
     "runtime": [
       {
         "skill": "Vibe Skills",
         "priority": 100,
         "keywords": ["完整做完", "多阶段", "受治理", "governed", "端到端", "完整流程", "整体推进"],
+        "negative_keywords": ["只解释一下", "一句话回答", "单个命令"],
+        "intent_boosts": ["clarify", "plan", "build"],
         "when": [
           "task is multi-stage",
           "needs clarify-plan-execute-verify-cleanup",
@@ -15,28 +24,28 @@
       }
     ],
     "commands": [
-      {"skill": "Vibe Command - vibe", "priority": 95, "keywords": ["/vibe", "vibe", "进入受治理执行"]},
-      {"skill": "Vibe Command - vibe-do-it", "priority": 95, "keywords": ["直接做", "开始执行", "按方案推进", "直接干"]},
-      {"skill": "Vibe Command - vibe-how-do-we-do", "priority": 95, "keywords": ["先出方案", "先看怎么做", "实施路径", "先规划一下"]},
-      {"skill": "Vibe Command - vibe-implement", "priority": 95, "keywords": ["开始实现", "进入开发", "按这个计划写"]},
-      {"skill": "Vibe Command - vibe-review", "priority": 95, "keywords": ["先 review", "帮我审一下", "看看有没有问题", "风险排查"]},
-      {"skill": "Vibe Command - vibe-what-do-i-want", "priority": 95, "keywords": ["理清需求", "还没想清楚", "冻结范围", "需求澄清"]}
+      {"skill": "Vibe Command - vibe", "priority": 95, "keywords": ["/vibe", "vibe", "进入受治理执行"], "intent_boosts": ["build"]},
+      {"skill": "Vibe Command - vibe-do-it", "priority": 95, "keywords": ["直接做", "开始执行", "按方案推进", "直接干"], "negative_keywords": ["先不要做", "先别实现"], "intent_boosts": ["build"]},
+      {"skill": "Vibe Command - vibe-how-do-we-do", "priority": 95, "keywords": ["先出方案", "先看怎么做", "实施路径", "先规划一下"], "intent_boosts": ["plan"]},
+      {"skill": "Vibe Command - vibe-implement", "priority": 95, "keywords": ["开始实现", "进入开发", "按这个计划写"], "negative_keywords": ["先不要实现"], "intent_boosts": ["build"]},
+      {"skill": "Vibe Command - vibe-review", "priority": 95, "keywords": ["先 review", "帮我审一下", "看看有没有问题", "风险排查"], "intent_boosts": ["review"]},
+      {"skill": "Vibe Command - vibe-what-do-i-want", "priority": 95, "keywords": ["理清需求", "还没想清楚", "冻结范围", "需求澄清"], "intent_boosts": ["clarify"]}
     ],
     "core": [
-      {"skill": "Vibe Core - Brainstorming", "priority": 90, "keywords": ["想法", "脑暴", "trade-off", "方案比较", "还没想清楚", "设计讨论"]},
-      {"skill": "Vibe Core - Writing Plans", "priority": 90, "keywords": ["实施计划", "工程计划", "拆任务", "落地计划", "handoff"]},
-      {"skill": "Vibe Core - Systematic Debugging", "priority": 92, "keywords": ["bug", "报错", "测试失败", "异常", "根因", "定位问题", "集成问题"]},
-      {"skill": "Vibe Core - Code Reviewer", "priority": 92, "keywords": ["review", "代码审查", "风险", "回归", "diff", "改动检查"]},
-      {"skill": "Vibe Core - TDD Guide", "priority": 90, "keywords": ["tdd", "先写测试", "red green refactor", "测试驱动"]},
-      {"skill": "Vibe Core - Subagent Development", "priority": 88, "keywords": ["拆子任务", "并行推进", "分治", "subagent"]}
+      {"skill": "Vibe Core - Brainstorming", "priority": 90, "keywords": ["想法", "脑暴", "trade-off", "方案比较", "还没想清楚", "设计讨论"], "negative_keywords": ["直接实现", "已经确定方案"], "intent_boosts": ["clarify", "plan"]},
+      {"skill": "Vibe Core - Writing Plans", "priority": 90, "keywords": ["实施计划", "工程计划", "拆任务", "落地计划", "handoff"], "intent_boosts": ["plan"]},
+      {"skill": "Vibe Core - Systematic Debugging", "priority": 92, "keywords": ["bug", "报错", "测试失败", "异常", "根因", "定位问题", "集成问题"], "intent_boosts": ["debug"]},
+      {"skill": "Vibe Core - Code Reviewer", "priority": 92, "keywords": ["review", "代码审查", "风险", "回归", "diff", "改动检查"], "intent_boosts": ["review"]},
+      {"skill": "Vibe Core - TDD Guide", "priority": 90, "keywords": ["tdd", "先写测试", "red green refactor", "测试驱动"], "intent_boosts": ["build"]},
+      {"skill": "Vibe Core - Subagent Development", "priority": 88, "keywords": ["拆子任务", "并行推进", "分治", "subagent"], "intent_boosts": ["build"]}
     ],
     "themes": [
-      {"skill": "Vibe Theme - AIOS Architect", "priority": 89, "keywords": ["架构", "技术选型", "api设计", "安全架构", "性能方案"]},
-      {"skill": "Vibe Theme - Create Plan", "priority": 89, "keywords": ["先给计划", "先出计划", "先看方案", "只读分析"]},
-      {"skill": "Vibe Theme - Context Hunter", "priority": 89, "keywords": ["看代码库模式", "找类似实现", "仓库约定", "命名规范", "schema 约定"]},
-      {"skill": "Vibe Theme - Build Error Resolver", "priority": 91, "keywords": ["构建失败", "编译错误", "lint错误", "依赖问题", "环境问题"]},
-      {"skill": "Vibe Theme - Comprehensive Research", "priority": 87, "keywords": ["调研", "研究", "多来源", "交叉验证", "资料汇总"]},
-      {"skill": "Vibe Theme - Autonomous Builder", "priority": 91, "keywords": ["持续开发", "连续推进", "端到端开发", "自动开发", "从需求到实现"]}
+      {"skill": "Vibe Theme - AIOS Architect", "priority": 89, "keywords": ["架构", "技术选型", "api设计", "安全架构", "性能方案"], "intent_boosts": ["plan"]},
+      {"skill": "Vibe Theme - Create Plan", "priority": 89, "keywords": ["先给计划", "先出计划", "先看方案", "只读分析"], "negative_keywords": ["直接实现", "马上改代码"], "intent_boosts": ["plan"]},
+      {"skill": "Vibe Theme - Context Hunter", "priority": 89, "keywords": ["看代码库模式", "找类似实现", "仓库约定", "命名规范", "schema 约定"], "intent_boosts": ["plan", "debug"]},
+      {"skill": "Vibe Theme - Build Error Resolver", "priority": 91, "keywords": ["构建失败", "编译错误", "lint错误", "依赖问题", "环境问题"], "intent_boosts": ["debug"]},
+      {"skill": "Vibe Theme - Comprehensive Research", "priority": 87, "keywords": ["调研", "研究", "多来源", "交叉验证", "资料汇总"], "intent_boosts": ["plan"]},
+      {"skill": "Vibe Theme - Autonomous Builder", "priority": 91, "keywords": ["持续开发", "连续推进", "端到端开发", "自动开发", "从需求到实现"], "negative_keywords": ["需求还不清楚", "先别实现"], "intent_boosts": ["build"]}
     ]
   },
   "dedup": {
