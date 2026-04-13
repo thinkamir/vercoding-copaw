@@ -56,6 +56,7 @@ Expected:
 - `route_mode: vibe`
 - primary should be a Vibe skill or wrapper
 - invocation should contain wrapper suggestion when applicable
+- returns confidence / decision_trace
 
 ### 7. Route to native browser family
 ```bash
@@ -73,3 +74,26 @@ python3 scripts/route_task.py --format json "帮我看一下 GitHub PR 并评论
 Expected:
 - `route_mode: native_copaw_first`
 - primary name should be `github`
+
+### 9. Risky action should require confirmation
+```bash
+python3 scripts/route_task.py --format text "帮我 force push 到 GitHub 并直接上线 deploy"
+```
+Expected:
+- `requires_human_confirmation: True`
+- includes risky reasons such as `force push` / `deploy`
+
+### 10. Batch routing via newline stdin
+```bash
+printf '%s\n%s\n' "先帮我理清需求，然后给一个实施方案" "打开网页并截图" | python3 scripts/route_task.py --batch --format text
+```
+Expected:
+- 2 routes returned
+
+### 11. Batch routing via JSON array
+```bash
+echo '["先帮我理清需求","帮我看一下 GitHub PR 并评论这个 issue"]' | python3 scripts/route_task.py --batch --format json
+```
+Expected:
+- `batch: true`
+- `count: 2`
