@@ -1,10 +1,19 @@
 #!/usr/bin/env python3
+import argparse
 import json
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CONFIG = ROOT / 'config' / 'vibe-routing.json'
+
+NATIVE_HINTS = [
+    ("browser", ["浏览器", "网页", "点击", "表单", "截图", "browser", "playwright"], "Prefer native CoPaw browser/browser_use skills."),
+    ("github", ["github", "pr", "issue", "pull request", "仓库", "commit", "push"], "Prefer native CoPaw Github skill for direct GitHub operations."),
+    ("web-search", ["搜索", "查一下", "最新", "新闻", "web", "search", "google", "duckduckgo"], "Prefer native CoPaw web-search/tavily/duckduckgo-search skills."),
+    ("cron", ["定时", "cron", "每周", "每天", "提醒", "heartbeat"], "Prefer native CoPaw cron/heartbeat workflow."),
+    ("code", ["写代码", "改代码", "修复", "debug", "测试", "重构", "实现"], "CoPaw native Code/Agentic Coding may also be appropriate depending on task scope.")
+]
 
 
 def load_config():
@@ -71,12 +80,23 @@ def explain(result):
     return reasons
 
 
-def main():
-    if len(sys.argv) < 2:
-        print('Usage: python3 scripts/select_vibe_skill.py "task text"')
-        sys.exit(1)
+def native_recommendation(text):
+    text_l = text.lower()
+    matched = []
+    for name, words, reason in NATIVE_HINTS:
+        hits = [w for w in words if w.lower() in text_l]
+        if hits:
+            matched.append({
+                'native_skill_family': name,
+                'matched_keywords': hits,
+                'reason': reason,
+                'score': len(hits)
+            })
+    matched.sort(key=lambda x: -x['score'])
+    return matched
 
-    text = ' '.join(sys.argv[1:])
+
+def build_payload(text, top_n):
     config = load_config()
     matched_intents = collect_alias_intents(text, config.get('aliases', {}))
 
@@ -115,19 +135,20 @@ def main():
             'score': None
         })
 
-    if not deduped:
-        print(json.dumps({
-            'input': text,
-            'matched_intents': matched_intents,
-            'recommended': [],
-            'excluded': excluded_payload,
-            'message': 'No direct Vibe skill match. Prefer standard CoPaw skill selection.'
-        }, ensure_ascii=False, indent=2))
-        return
+    native = native_recommendation(text)
+    top_vibe = deduped[:top_n]
 
-    print(json.dumps({
+    recommendation_mode = 'vibe'
+    mode_reason = 'Matched one or more Vibe skills with positive routing score.'
+    if native and (not top_vibe or native[0]['score'] >= 2 and (not top_vibe or top_vibe[0]['score'] < 100)):
+        recommendation_mode = 'native_copaw_first'
+        mode_reason = native[0]['reason']
+
+    return {
         'input': text,
         'matched_intents': matched_intents,
+        'recommendation_mode': recommendation_mode,
+        'mode_reason': mode_reason,
         'recommended': [
             {
                 'skill': r['skill'],
@@ -135,10 +156,69 @@ def main():
                 'score': r['score'],
                 'reasons': r['reasons']
             }
-            for r in deduped[:5]
+            for r in top_vibe
         ],
-        'excluded': excluded_payload[:10]
-    }, ensure_ascii=False, indent=2))
+        'native_hints': native[:5],
+        'excluded': excluded_payload[:10],
+        'message': 'No direct Vibe skill match. Prefer standard CoPaw skill selection.' if not top_vibe else ''
+    }
+
+
+def format_text(payload):
+    lines = []
+    lines.append(f"Input: {payload['input']}")
+    lines.append(f"Recommendation mode: {payload['recommendation_mode']}")
+    lines.append(f"Reason: {payload['mode_reason']}")
+    if payload['matched_intents']:
+        lines.append("Matched intents:")
+        for k, v in payload['matched_intents'].items():
+            lines.append(f"- {k}: {', '.join(v)}")
+    if payload['recommended']:
+        lines.append("Recommended Vibe skills:")
+        for i, item in enumerate(payload['recommended'], 1):
+            lines.append(f"{i}. {item['skill']} [{item['layer']}] score={item['score']}")
+            for reason in item['reasons']:
+                lines.append(f"   - {reason}")
+    else:
+        lines.append("Recommended Vibe skills: none")
+        if payload.get('message'):
+            lines.append(f"- {payload['message']}")
+    if payload['native_hints']:
+        lines.append("Native CoPaw hints:")
+        for item in payload['native_hints']:
+            lines.append(f"- {item['native_skill_family']}: {', '.join(item['matched_keywords'])}")
+            lines.append(f"  {item['reason']}")
+    if payload['excluded']:
+        lines.append("Excluded / suppressed:")
+        for item in payload['excluded'][:5]:
+            reason = '; '.join(item['reasons']) if item['reasons'] else 'score <= 0'
+            lines.append(f"- {item['skill']}: {reason}")
+    return '\n'.join(lines)
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description='Recommend Vibe skills for a task text.')
+    parser.add_argument('text', nargs='*', help='Task text. If omitted, stdin will be used.')
+    parser.add_argument('--top', type=int, default=5, help='Number of top Vibe recommendations to return.')
+    parser.add_argument('--format', choices=['json', 'text'], default='json', help='Output format.')
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+    if args.text:
+        text = ' '.join(args.text).strip()
+    else:
+        text = sys.stdin.read().strip()
+    if not text:
+        print('Usage: python3 scripts/select_vibe_skill.py [--format json|text] [--top N] "task text"', file=sys.stderr)
+        sys.exit(1)
+
+    payload = build_payload(text, max(1, args.top))
+    if args.format == 'text':
+        print(format_text(payload))
+    else:
+        print(json.dumps(payload, ensure_ascii=False, indent=2))
 
 
 if __name__ == '__main__':

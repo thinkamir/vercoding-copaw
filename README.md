@@ -13,6 +13,7 @@ CoPaw workspace integration for Vibe-Skills.
 - `docs/VIBE_SKILLS_INDEX.md`
 - `docs/VIBE_SKILLS_ROUTING.md`
 - `docs/VIBE_SKILLS_ROUTING_STRUCTURED.md`
+- `docs/VIBE_ROUTING_EVAL_CASES.md`
 
 ## Scope
 This repository contains the curated CoPaw-side integration layer for upstream Vibe-Skills, not the full upstream repository mirror.
@@ -20,7 +21,12 @@ This repository contains the curated CoPaw-side integration layer for upstream V
 ## Quick Start
 ### Structured routing helper
 ```bash
-python3 scripts/select_vibe_skill.py "先帮我理清需求，然后给一个实施方案"
+python3 scripts/select_vibe_skill.py --format text "先帮我理清需求，然后给一个实施方案"
+```
+
+### Read from stdin
+```bash
+echo "打开网页并截图，顺便点一下按钮" | python3 scripts/select_vibe_skill.py --format text
 ```
 
 ### Sync upstream integration

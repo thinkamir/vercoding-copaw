@@ -3,24 +3,30 @@
 ## 新增文件
 - `config/vibe-routing.json`：结构化路由规则
 - `scripts/select_vibe_skill.py`：基于任务文本推荐 Vibe skill 的本地选择器
+- `docs/VIBE_ROUTING_EVAL_CASES.md`：路由评测样例集
 
-## Phase 9 增强
+## Phase 10 增强
 相比上一版，本阶段新增：
-- **别名词典**：支持把中文近义表达归并为意图
-- **负向规则**：例如“先不要做/先别实现”会抑制实现类技能
-- **多意图加权**：同一句话同时包含澄清、计划、执行信号时做综合评分
-- **可解释输出**：返回推荐理由、意图命中、排除理由
+- `--format json|text`
+- `--top N`
+- 支持 stdin 输入
+- 增加“优先 Vibe 还是优先 CoPaw 原生 skill”的建议
+- 增加评测样例集
 
 ## 使用方式
-### 1. 手动测试推荐
+### 1. JSON 输出
 ```bash
-python3 scripts/select_vibe_skill.py "先帮我理清需求，然后给一个实施方案"
-python3 scripts/select_vibe_skill.py "先别实现，先 review 一下这个改动的风险"
+python3 scripts/select_vibe_skill.py --format json --top 3 "先帮我理清需求，然后给一个实施方案"
 ```
 
-### 2. 查看 JSON 规则
+### 2. 文本输出
 ```bash
-cat config/vibe-routing.json
+python3 scripts/select_vibe_skill.py --format text "先别实现，先 review 一下这个 diff 的风险"
+```
+
+### 3. 从 stdin 读取
+```bash
+echo "打开网页并截图，顺便点一下按钮" | python3 scripts/select_vibe_skill.py --format text
 ```
 
 ## 当前能力
@@ -31,6 +37,7 @@ cat config/vibe-routing.json
 - 基于去重规则过滤冲突推荐
 - 输出 top-N 推荐 skill
 - 输出“为什么推荐 / 为什么排除”
+- 输出是否更适合优先使用 CoPaw 原生 skill
 
 ## 后续可扩展
 - 增加更多行业/场景别名词典
