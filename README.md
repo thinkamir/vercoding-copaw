@@ -7,9 +7,29 @@ CoPaw workspace integration for Vibe-Skills.
 - `active_skills/` mirrored Vibe runtime skills
 - `scripts/sync_vibe_skills.sh` sync script with diff / backup / rollback support
 - `scripts/rollback_vibe_skills.sh` rollback helper
+- `scripts/select_vibe_skill.py` local structured router helper
+- `config/vibe-routing.json` structured routing rules
 - `docs/VIBE_SKILLS_INTEGRATION.md`
 - `docs/VIBE_SKILLS_INDEX.md`
 - `docs/VIBE_SKILLS_ROUTING.md`
+- `docs/VIBE_SKILLS_ROUTING_STRUCTURED.md`
 
 ## Scope
 This repository contains the curated CoPaw-side integration layer for upstream Vibe-Skills, not the full upstream repository mirror.
+
+## Quick Start
+### Structured routing helper
+```bash
+python3 scripts/select_vibe_skill.py "先帮我理清需求，然后给一个实施方案"
+```
+
+### Sync upstream integration
+```bash
+bash scripts/sync_vibe_skills.sh --diff
+bash scripts/sync_vibe_skills.sh
+```
+
+### Rollback
+```bash
+bash scripts/rollback_vibe_skills.sh <backup_timestamp>
+```
