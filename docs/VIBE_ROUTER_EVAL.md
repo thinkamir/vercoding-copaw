@@ -21,18 +21,24 @@ Current suite size:
 - `24` route cases
 
 ## Phase 16 additions
-Now supports grouped execution through:
+Supports grouped execution through:
 - `tags` in each case
 - `--tag` filter in `eval_router.py`
 - `--case-id` filter in `eval_router.py`
 
-Example tag groups used now:
+## Phase 17 additions
+Supports named preset suites through `--preset`:
+- `full`
 - `smoke`
-- `vibe`
 - `native`
+- `vibe`
 - `risky`
 - `edge`
-- `conflict`
+
+Rules:
+- `full` means full suite
+- `--preset` can be combined with `--case-id`
+- `--preset` cannot be combined with `--tag`
 
 ## Usage
 ### Text summary
@@ -50,14 +56,11 @@ python3 scripts/eval_router.py --format json
 python3 scripts/eval_router.py --fail-on-error
 ```
 
-### Run only risky cases
+### Run a preset suite
 ```bash
-python3 scripts/eval_router.py --tag risky
-```
-
-### Run only native cases
-```bash
-python3 scripts/eval_router.py --tag native
+python3 scripts/eval_router.py --preset smoke
+python3 scripts/eval_router.py --preset risky
+python3 scripts/eval_router.py --preset full
 ```
 
 ### Run one specific case

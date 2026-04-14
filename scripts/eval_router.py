@@ -12,6 +12,14 @@ if str(SCRIPTS_DIR) not in sys.path:
 from route_task import build_route  # noqa: E402
 
 DEFAULT_CASES = ROOT / 'tests' / 'route_cases.json'
+PRESET_TAGS = {
+    'full': [],
+    'smoke': ['smoke'],
+    'native': ['native'],
+    'vibe': ['vibe'],
+    'risky': ['risky'],
+    'edge': ['edge'],
+}
 
 
 def load_cases(path):
@@ -89,11 +97,13 @@ def check_case(case):
     }
 
 
-def format_text(results, selected_tags=None, selected_ids=None):
+def format_text(results, selected_tags=None, selected_ids=None, preset=None):
     total = len(results)
     passed = sum(1 for r in results if r['passed'])
     failed = total - passed
     scope_parts = []
+    if preset:
+        scope_parts.append('preset=' + preset)
     if selected_tags:
         scope_parts.append('tags=' + ','.join(selected_tags))
     if selected_ids:
@@ -118,13 +128,19 @@ def parse_args():
     parser.add_argument('--fail-on-error', action='store_true', help='Exit non-zero if any case fails.')
     parser.add_argument('--tag', action='append', default=[], help='Filter cases by tag. Can be repeated.')
     parser.add_argument('--case-id', action='append', default=[], help='Filter cases by exact case id. Can be repeated.')
+    parser.add_argument('--preset', choices=list(PRESET_TAGS.keys()), help='Run a named preset suite.')
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
+    if args.preset and args.tag:
+        print('Do not combine --preset with --tag. Use one filtering mode.', file=sys.stderr)
+        sys.exit(1)
+
+    selected_tags = PRESET_TAGS.get(args.preset, []) if args.preset else args.tag
     cases = load_cases(args.cases)
-    cases = filter_cases(cases, tags=args.tag, case_ids=args.case_id)
+    cases = filter_cases(cases, tags=selected_tags, case_ids=args.case_id)
     if not cases:
         print('No cases matched the provided filters.', file=sys.stderr)
         sys.exit(1)
@@ -136,7 +152,8 @@ def main():
 
     payload = {
         'cases_file': args.cases,
-        'selected_tags': args.tag,
+        'selected_preset': args.preset,
+        'selected_tags': selected_tags,
         'selected_case_ids': args.case_id,
         'total': total,
         'passed': passed,
@@ -147,7 +164,7 @@ def main():
     if args.format == 'json':
         print(json.dumps(payload, ensure_ascii=False, indent=2))
     else:
-        print(format_text(results, selected_tags=args.tag, selected_ids=args.case_id))
+        print(format_text(results, selected_tags=selected_tags, selected_ids=args.case_id, preset=args.preset))
 
     if args.fail_on_error and failed > 0:
         sys.exit(1)
