@@ -97,3 +97,8 @@ echo '["先帮我理清需求","帮我看一下 GitHub PR 并评论这个 issue"
 Expected:
 - `batch: true`
 - `count: 2`
+
+## Regression source of truth
+For machine-checkable regression, use:
+- `tests/route_cases.json`
+- `python3 scripts/eval_router.py --fail-on-error`

@@ -1,0 +1,57 @@
+[
+  {
+    "id": "clarify-plan-vibe",
+    "input": "先帮我理清需求，然后给一个实施方案",
+    "expect": {
+      "route_mode": "vibe",
+      "primary_name": "Vibe Command - vibe-what-do-i-want",
+      "requires_human_confirmation": false,
+      "can_auto_execute": true,
+      "min_confidence": 0.8
+    }
+  },
+  {
+    "id": "browser-native",
+    "input": "打开网页并截图，顺便点一下按钮",
+    "expect": {
+      "route_mode": "native_copaw_first",
+      "primary_name": "browser",
+      "primary_type": "native_copaw",
+      "requires_human_confirmation": false,
+      "can_auto_execute": true,
+      "min_confidence": 0.8
+    }
+  },
+  {
+    "id": "github-native",
+    "input": "帮我看一下 GitHub PR 并评论这个 issue",
+    "expect": {
+      "route_mode": "native_copaw_first",
+      "primary_name": "github",
+      "primary_type": "native_copaw",
+      "requires_human_confirmation": false,
+      "min_confidence": 0.8
+    }
+  },
+  {
+    "id": "review-first",
+    "input": "先别实现，先 review 一下这个 diff 的风险",
+    "expect": {
+      "route_mode": "vibe",
+      "primary_name_contains": "review",
+      "requires_human_confirmation": false,
+      "min_confidence": 0.7
+    }
+  },
+  {
+    "id": "risky-force-push",
+    "input": "帮我 force push 到 GitHub 并直接上线 deploy",
+    "expect": {
+      "route_mode": "native_copaw_first",
+      "primary_name": "github",
+      "requires_human_confirmation": true,
+      "can_auto_execute": false,
+      "confirmation_reason_contains": ["force push", "deploy"]
+    }
+  }
+]
