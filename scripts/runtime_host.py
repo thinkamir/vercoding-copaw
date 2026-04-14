@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
 import argparse
 import json
-import shlex
-import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+SCRIPTS_DIR = ROOT / 'scripts'
 CONFIG = ROOT / 'config' / 'runtime-host.json'
-SCHEMA_VERSION = '1.0.0'
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
+from runtime_backends import dispatch_backend  # noqa: E402
+
+SCHEMA_VERSION = '1.1.0'
 
 
 def load_config(path):
@@ -52,64 +56,6 @@ def validate_for_host(result):
     return True, None
 
 
-def maybe_run_template(handler, invocation_payload, allow_shell_execute=False, timeout=30):
-    template = handler.get('command_template')
-    if not allow_shell_execute:
-        return {
-            'executed': False,
-            'execution_mode': 'host_dispatch_only',
-            'details': 'Shell execution disabled. Host accepted and normalized the invocation.',
-        }
-    if not handler.get('supports_shell_execution'):
-        return {
-            'executed': False,
-            'execution_mode': 'host_dispatch_only',
-            'details': 'Handler does not allow shell execution.',
-        }
-    if not template:
-        return {
-            'executed': False,
-            'execution_mode': 'host_dispatch_only',
-            'details': 'No command_template configured for this handler.',
-        }
-
-    replacements = {
-        '{command}': invocation_payload.get('command') or '',
-        '{tool_family}': invocation_payload.get('tool_family') or '',
-        '{target_name}': invocation_payload.get('target_name') or '',
-        '{text}': invocation_payload.get('task_payload', {}).get('text') or '',
-        '{command_preview}': invocation_payload.get('command_preview') or '',
-    }
-    shell_command = template
-    for old, new in replacements.items():
-        shell_command = shell_command.replace(old, shlex.quote(str(new)))
-
-    try:
-        completed = subprocess.run(
-            shell_command,
-            shell=True,
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-        )
-        return {
-            'executed': completed.returncode == 0,
-            'execution_mode': 'shell_command',
-            'details': {
-                'returncode': completed.returncode,
-                'stdout': completed.stdout,
-                'stderr': completed.stderr,
-                'shell_command': shell_command,
-            },
-        }
-    except subprocess.TimeoutExpired:
-        return {
-            'executed': False,
-            'execution_mode': 'shell_command_timeout',
-            'details': f'Shell execution timed out after {timeout}s.',
-        }
-
-
 def dispatch_result(result, config, allow_shell_execute=False, timeout=None):
     ok, rejection = validate_for_host(result)
     if not ok:
@@ -129,9 +75,9 @@ def dispatch_result(result, config, allow_shell_execute=False, timeout=None):
 
     invocation_payload = build_invocation_payload(result)
     timeout = timeout or config.get('default_timeout', 30)
-    execution = maybe_run_template(
-        handler,
+    backend_result = dispatch_backend(
         invocation_payload,
+        handler,
         allow_shell_execute=allow_shell_execute,
         timeout=timeout,
     )
@@ -147,7 +93,8 @@ def dispatch_result(result, config, allow_shell_execute=False, timeout=None):
         'host_status': host_status_map.get(handler.get('handler_type'), 'host_dispatched'),
         'handler': handler,
         'invocation_payload': invocation_payload,
-        'execution': execution,
+        'backend': backend_result,
+        'execution': backend_result.get('execution'),
     }
 
 
@@ -165,6 +112,9 @@ def format_text(payload):
         lines.append('Invocation payload:')
         for key, value in payload['invocation_payload'].items():
             lines.append(f"- {key}: {json.dumps(value, ensure_ascii=False) if isinstance(value, (dict, list)) else value}")
+    if payload.get('backend'):
+        lines.append('Backend:')
+        lines.append(json.dumps(payload['backend'], ensure_ascii=False))
     details = payload.get('execution') or payload.get('details')
     if details:
         lines.append('Execution / details:')

@@ -12,6 +12,7 @@ to:
 ## New files
 - `config/runtime-host.json`
 - `scripts/runtime_host.py`
+- `scripts/runtime_backends.py`
 
 ## Runtime host role
 The runtime host is the first unified execution host inside this repository.
@@ -20,6 +21,7 @@ It is responsible for:
 - validating whether a dispatch payload is truly auto-dispatchable
 - mapping `adapter_type` to a configured host handler
 - normalizing invocation payloads
+- dispatching into backend-specific handlers
 - optionally running a shell command template when explicitly allowed
 - returning a single structured host result contract
 
@@ -45,12 +47,25 @@ Mapped from adapter types:
 - `vibe_skill`
 - `native_copaw`
 
+## Backend handlers
+`runtime_backends.py` now implements backend-specific preparation logic for:
+- `vibe_wrapper`
+- `vibe_skill`
+- `native_copaw/browser`
+- `native_copaw/github`
+- `native_copaw/web-search`
+- `native_copaw/cron`
+- `native_copaw/code`
+
+This means the runtime host no longer stops at generic normalization. It now produces backend-family-specific execution payloads.
+
 ## Host result fields
 Typical host result fields include:
 - `accepted`
 - `host_status`
 - `handler`
 - `invocation_payload`
+- `backend`
 - `execution`
 
 ## Host status values

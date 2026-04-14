@@ -11,6 +11,7 @@ CoPaw workspace integration for Vibe-Skills.
 - `scripts/route_task.py` task pre-router for Vibe vs native CoPaw execution
 - `scripts/execute_routed_task.py` execution bridge from routed tasks to dispatch payloads
 - `scripts/runtime_host.py` local runtime host for routed execution
+- `scripts/runtime_backends.py` backend-specific handler dispatch for runtime host
 - `scripts/eval_router.py` regression evaluator for router behavior
 - `scripts/diff_router_reports.py` report diff / drift detector
 - `config/vibe-routing.json` structured routing rules
@@ -107,15 +108,16 @@ Current CI artifact:
 - `decision_trace`
 
 ## Execution chain highlights
-`execute_routed_task.py` and `runtime_host.py` now add:
+`execute_routed_task.py`, `runtime_host.py`, and `runtime_backends.py` now add:
 - adapter lookup from routed output
 - dispatch payload generation
 - host-level handler dispatch
+- backend-specific handler preparation
 - risk-gated execution blocking
 - preview / runtime host dispatch / optional shell execution
 
 ## Documentation map
-- `docs/VIBE_FEATURES_SUMMARY.md`: full capability summary across phases 1-21
+- `docs/VIBE_FEATURES_SUMMARY.md`: full capability summary across phases 1-22
 - `docs/VIBE_ROUTER_EVAL.md`: regression evaluator usage and CI behavior
 - `docs/VIBE_ROUTER_REPORT_DIFF.md`: historical report diff / drift detection
 - `docs/VIBE_EXECUTION_CHAIN.md`: routed execution bridge and adapter contract

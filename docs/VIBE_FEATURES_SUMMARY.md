@@ -207,6 +207,23 @@ CI 现在会输出：
 
 这意味着仓库已进一步从“执行桥接层”升级到“runtime host 宿主层”。
 
+### Phase 22：接入真实 backend handler 分层
+新增：
+- `scripts/runtime_backends.py`
+
+支持 runtime host 按 backend family 继续分发到更具体的处理器，当前已覆盖：
+- `vibe_wrapper`
+- `vibe_skill`
+- `native_copaw/browser`
+- `native_copaw/github`
+- `native_copaw/web-search`
+- `native_copaw/cron`
+- `native_copaw/code`
+
+支持输出 backend-specific payload、backend status 与对应的执行准备结果。
+
+这意味着仓库已进一步从“runtime host 宿主层”升级到“backend handler 分层执行架构”。
+
 ---
 
 ## 当前核心脚本清单
