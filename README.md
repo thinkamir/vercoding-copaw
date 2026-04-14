@@ -49,6 +49,7 @@ python3 scripts/eval_router.py --preset risky
 python3 scripts/eval_router.py --preset full
 python3 scripts/eval_router.py --tag native
 python3 scripts/eval_router.py --case-id github-native
+python3 scripts/eval_router.py --preset full --output reports/router-eval.json --output-format json
 ```
 
 Current regression suite size:
@@ -64,6 +65,9 @@ Workflow:
 ```text
 .github/workflows/router-eval.yml
 ```
+
+Current CI artifact:
+- `reports/router-eval.json`
 
 ## Router contract highlights
 `route_task.py` now returns integration-oriented fields such as:

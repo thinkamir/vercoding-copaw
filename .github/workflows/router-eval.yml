@@ -23,4 +23,10 @@ jobs:
         run: python --version
 
       - name: Run router regression eval
-        run: python3 scripts/eval_router.py --fail-on-error
+        run: python3 scripts/eval_router.py --fail-on-error --format text --output reports/router-eval.json --output-format json
+
+      - name: Upload router eval artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: router-eval-report
+          path: reports/router-eval.json

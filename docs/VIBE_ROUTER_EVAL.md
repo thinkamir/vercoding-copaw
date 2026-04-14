@@ -40,6 +40,16 @@ Rules:
 - `--preset` can be combined with `--case-id`
 - `--preset` cannot be combined with `--tag`
 
+## Phase 18 additions
+Supports report file output through:
+- `--output <path>`
+- `--output-format json|text|match-console`
+
+Typical use cases:
+- persist local reports under `reports/`
+- upload CI artifacts
+- compare outputs across runs
+
 ## Usage
 ### Text summary
 ```bash
@@ -63,6 +73,16 @@ python3 scripts/eval_router.py --preset risky
 python3 scripts/eval_router.py --preset full
 ```
 
+### Write JSON report file
+```bash
+python3 scripts/eval_router.py --preset full --output reports/router-eval.json --output-format json
+```
+
+### Write text report file matching console format
+```bash
+python3 scripts/eval_router.py --preset smoke --format text --output reports/router-eval.txt --output-format match-console
+```
+
 ### Run one specific case
 ```bash
 python3 scripts/eval_router.py --case-id github-native
@@ -79,6 +99,11 @@ Workflow file:
 .github/workflows/router-eval.yml
 ```
 
+Current CI behavior:
+- runs regression eval
+- writes `reports/router-eval.json`
+- uploads the report as an artifact
+
 ## What gets checked
 Each test case can assert:
 - `route_mode`
@@ -91,4 +116,4 @@ Each test case can assert:
 - `confirmation_reason_contains`
 
 ## Next step
-A later phase can add fixture grouping presets, snapshots, route drift reports, or PR annotations.
+A later phase can add report diffing, historical baselines, snapshots, route drift reports, or PR annotations.

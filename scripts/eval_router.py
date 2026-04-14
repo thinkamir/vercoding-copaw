@@ -121,14 +121,22 @@ def format_text(results, selected_tags=None, selected_ids=None, preset=None):
     return '\n'.join(lines)
 
 
+def write_output(path_str, content):
+    path = Path(path_str)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(content, encoding='utf-8')
+
+
 def parse_args():
     parser = argparse.ArgumentParser(description='Evaluate route_task.py against expected routing cases.')
     parser.add_argument('--cases', default=str(DEFAULT_CASES), help='Path to route case JSON file.')
-    parser.add_argument('--format', choices=['json', 'text'], default='text', help='Output format.')
+    parser.add_argument('--format', choices=['json', 'text'], default='text', help='Console output format.')
     parser.add_argument('--fail-on-error', action='store_true', help='Exit non-zero if any case fails.')
     parser.add_argument('--tag', action='append', default=[], help='Filter cases by tag. Can be repeated.')
     parser.add_argument('--case-id', action='append', default=[], help='Filter cases by exact case id. Can be repeated.')
     parser.add_argument('--preset', choices=list(PRESET_TAGS.keys()), help='Run a named preset suite.')
+    parser.add_argument('--output', help='Optional file path to write the evaluation report.')
+    parser.add_argument('--output-format', choices=['json', 'text', 'match-console'], default='match-console', help='Output file format.')
     return parser.parse_args()
 
 
@@ -161,10 +169,21 @@ def main():
         'results': results,
     }
 
+    text_output = format_text(results, selected_tags=selected_tags, selected_ids=args.case_id, preset=args.preset)
+    json_output = json.dumps(payload, ensure_ascii=False, indent=2)
+
     if args.format == 'json':
-        print(json.dumps(payload, ensure_ascii=False, indent=2))
+        console_output = json_output
     else:
-        print(format_text(results, selected_tags=selected_tags, selected_ids=args.case_id, preset=args.preset))
+        console_output = text_output
+    print(console_output)
+
+    if args.output:
+        output_format = args.output_format
+        if output_format == 'match-console':
+            output_format = args.format
+        file_content = json_output if output_format == 'json' else text_output
+        write_output(args.output, file_content)
 
     if args.fail_on_error and failed > 0:
         sys.exit(1)
