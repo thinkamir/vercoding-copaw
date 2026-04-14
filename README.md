@@ -11,7 +11,7 @@ CoPaw workspace integration for Vibe-Skills.
 - `scripts/route_task.py` task pre-router for Vibe vs native CoPaw execution
 - `scripts/eval_router.py` regression evaluator for router behavior
 - `config/vibe-routing.json` structured routing rules
-- `tests/route_cases.json` route regression cases
+- `tests/route_cases.json` route regression cases with tags
 - `.github/workflows/router-eval.yml` GitHub Actions workflow for router regression
 - `docs/VIBE_SKILLS_INTEGRATION.md`
 - `docs/VIBE_SKILLS_INDEX.md`
@@ -44,6 +44,9 @@ printf '%s\n%s\n' "先帮我理清需求，然后给一个实施方案" "打开�
 ```bash
 python3 scripts/eval_router.py
 python3 scripts/eval_router.py --fail-on-error
+python3 scripts/eval_router.py --tag risky
+python3 scripts/eval_router.py --tag native
+python3 scripts/eval_router.py --case-id github-native
 ```
 
 Current regression suite size:

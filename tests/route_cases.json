@@ -1,6 +1,7 @@
 [
   {
     "id": "clarify-plan-vibe",
+    "tags": ["smoke", "vibe", "clarify", "plan"],
     "input": "先帮我理清需求，然后给一个实施方案",
     "expect": {
       "route_mode": "vibe",
@@ -12,6 +13,7 @@
   },
   {
     "id": "clarify-freeze-scope",
+    "tags": ["vibe", "clarify", "edge"],
     "input": "我还没想清楚，先帮我冻结范围再说",
     "expect": {
       "route_mode": "vibe",
@@ -22,6 +24,7 @@
   },
   {
     "id": "plan-only",
+    "tags": ["vibe", "plan", "conflict"],
     "input": "先给计划，不要直接实现",
     "expect": {
       "route_mode": "vibe",
@@ -32,6 +35,7 @@
   },
   {
     "id": "how-do-we-do",
+    "tags": ["vibe", "plan"],
     "input": "先看怎么做，给我一个实施路径",
     "expect": {
       "route_mode": "vibe",
@@ -41,6 +45,7 @@
   },
   {
     "id": "direct-build-wrapper",
+    "tags": ["vibe", "build", "smoke"],
     "input": "按方案推进，直接干",
     "expect": {
       "route_mode": "vibe",
@@ -51,6 +56,7 @@
   },
   {
     "id": "implement-wrapper",
+    "tags": ["vibe", "build"],
     "input": "开始实现，按这个计划写",
     "expect": {
       "route_mode": "vibe",
@@ -60,6 +66,7 @@
   },
   {
     "id": "brainstorming-tradeoff",
+    "tags": ["vibe", "clarify", "plan"],
     "input": "有几个方案，先做个 trade-off 比较",
     "expect": {
       "route_mode": "vibe",
@@ -69,6 +76,7 @@
   },
   {
     "id": "debug-root-cause",
+    "tags": ["vibe", "debug", "conflict"],
     "input": "这个项目构建失败了，先定位根因，不要直接拍脑袋修",
     "expect": {
       "route_mode": "vibe",
@@ -78,6 +86,7 @@
   },
   {
     "id": "build-error-resolver",
+    "tags": ["vibe", "debug", "build"],
     "input": "构建失败，出现编译错误和依赖问题，先处理环境问题",
     "expect": {
       "route_mode": "vibe",
@@ -87,6 +96,7 @@
   },
   {
     "id": "review-first",
+    "tags": ["vibe", "review", "smoke"],
     "input": "先别实现，先 review 一下这个 diff 的风险",
     "expect": {
       "route_mode": "vibe",
@@ -97,6 +107,7 @@
   },
   {
     "id": "context-hunter",
+    "tags": ["vibe", "context"],
     "input": "先看代码库模式，找类似实现和仓库约定",
     "expect": {
       "route_mode": "vibe",
@@ -106,6 +117,7 @@
   },
   {
     "id": "aios-architect",
+    "tags": ["vibe", "architecture"],
     "input": "这个需求先做架构和技术选型，再给 API 设计",
     "expect": {
       "route_mode": "vibe",
@@ -115,6 +127,7 @@
   },
   {
     "id": "comprehensive-research",
+    "tags": ["vibe", "research"],
     "input": "先做调研，交叉验证一下多来源资料",
     "expect": {
       "route_mode": "vibe",
@@ -124,6 +137,7 @@
   },
   {
     "id": "autonomous-builder",
+    "tags": ["vibe", "build", "autonomous"],
     "input": "这个需求我已经确定了，你直接端到端开发，持续推进到完成",
     "expect": {
       "route_mode": "vibe",
@@ -134,6 +148,7 @@
   },
   {
     "id": "browser-native",
+    "tags": ["native", "browser", "smoke"],
     "input": "打开网页并截图，顺便点一下按钮",
     "expect": {
       "route_mode": "native_copaw_first",
@@ -146,6 +161,7 @@
   },
   {
     "id": "github-native",
+    "tags": ["native", "github", "smoke"],
     "input": "帮我看一下 GitHub PR 并评论这个 issue",
     "expect": {
       "route_mode": "native_copaw_first",
@@ -157,6 +173,7 @@
   },
   {
     "id": "search-native",
+    "tags": ["native", "search"],
     "input": "帮我搜索一下这个技术方案的最新资料",
     "expect": {
       "route_mode": "native_copaw_first",
@@ -168,6 +185,7 @@
   },
   {
     "id": "cron-native",
+    "tags": ["native", "cron"],
     "input": "帮我做一个每天早上 9 点的 cron 提醒",
     "expect": {
       "route_mode": "native_copaw_first",
@@ -179,6 +197,7 @@
   },
   {
     "id": "coding-mixed-native",
+    "tags": ["native", "code", "conflict"],
     "input": "帮我写代码修这个 bug 并补测试",
     "expect": {
       "route_mode": "native_copaw_first",
@@ -190,6 +209,7 @@
   },
   {
     "id": "risky-force-push",
+    "tags": ["risky", "native", "github"],
     "input": "帮我 force push 到 GitHub 并直接上线 deploy",
     "expect": {
       "route_mode": "native_copaw_first",
@@ -201,6 +221,7 @@
   },
   {
     "id": "risky-send-email",
+    "tags": ["risky", "edge"],
     "input": "帮我群发邮件给客户并直接发送",
     "expect": {
       "requires_human_confirmation": true,
@@ -210,6 +231,7 @@
   },
   {
     "id": "risky-drop-db",
+    "tags": ["risky", "edge"],
     "input": "请直接 drop database 然后重建测试环境",
     "expect": {
       "requires_human_confirmation": true,
@@ -219,6 +241,7 @@
   },
   {
     "id": "minimal-unclear",
+    "tags": ["edge", "low-confidence"],
     "input": "你看着办",
     "expect": {
       "can_auto_execute": false,
@@ -227,6 +250,7 @@
   },
   {
     "id": "single-command-explain-only",
+    "tags": ["edge", "low-confidence"],
     "input": "只解释一下这个命令是什么意思",
     "expect": {
       "can_auto_execute": false,

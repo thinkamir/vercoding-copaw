@@ -18,6 +18,17 @@ def load_cases(path):
     return json.loads(Path(path).read_text(encoding='utf-8'))
 
 
+def filter_cases(cases, tags=None, case_ids=None):
+    filtered = cases
+    if tags:
+        tag_set = set(tags)
+        filtered = [c for c in filtered if tag_set.intersection(set(c.get('tags', [])))]
+    if case_ids:
+        id_set = set(case_ids)
+        filtered = [c for c in filtered if c.get('id') in id_set]
+    return filtered
+
+
 def check_case(case):
     route = build_route(case['input'], top_n=5)
     expect = case.get('expect', {})
@@ -63,6 +74,7 @@ def check_case(case):
 
     return {
         'id': case.get('id'),
+        'tags': case.get('tags', []),
         'input': case.get('input'),
         'passed': not failures,
         'failures': failures,
@@ -77,14 +89,21 @@ def check_case(case):
     }
 
 
-def format_text(results):
+def format_text(results, selected_tags=None, selected_ids=None):
     total = len(results)
     passed = sum(1 for r in results if r['passed'])
     failed = total - passed
-    lines = [f"Router eval summary: total={total} passed={passed} failed={failed}"]
+    scope_parts = []
+    if selected_tags:
+        scope_parts.append('tags=' + ','.join(selected_tags))
+    if selected_ids:
+        scope_parts.append('case_ids=' + ','.join(selected_ids))
+    scope_text = f" ({'; '.join(scope_parts)})" if scope_parts else ''
+    lines = [f"Router eval summary{scope_text}: total={total} passed={passed} failed={failed}"]
     for r in results:
         status = 'PASS' if r['passed'] else 'FAIL'
-        lines.append(f"- [{status}] {r['id']}")
+        tags = ','.join(r.get('tags', []))
+        lines.append(f"- [{status}] {r['id']}" + (f" tags=[{tags}]" if tags else ''))
         if not r['passed']:
             for failure in r['failures']:
                 lines.append(f"  - {failure}")
@@ -97,12 +116,19 @@ def parse_args():
     parser.add_argument('--cases', default=str(DEFAULT_CASES), help='Path to route case JSON file.')
     parser.add_argument('--format', choices=['json', 'text'], default='text', help='Output format.')
     parser.add_argument('--fail-on-error', action='store_true', help='Exit non-zero if any case fails.')
+    parser.add_argument('--tag', action='append', default=[], help='Filter cases by tag. Can be repeated.')
+    parser.add_argument('--case-id', action='append', default=[], help='Filter cases by exact case id. Can be repeated.')
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
     cases = load_cases(args.cases)
+    cases = filter_cases(cases, tags=args.tag, case_ids=args.case_id)
+    if not cases:
+        print('No cases matched the provided filters.', file=sys.stderr)
+        sys.exit(1)
+
     results = [check_case(case) for case in cases]
     total = len(results)
     passed = sum(1 for r in results if r['passed'])
@@ -110,6 +136,8 @@ def main():
 
     payload = {
         'cases_file': args.cases,
+        'selected_tags': args.tag,
+        'selected_case_ids': args.case_id,
         'total': total,
         'passed': passed,
         'failed': failed,
@@ -119,7 +147,7 @@ def main():
     if args.format == 'json':
         print(json.dumps(payload, ensure_ascii=False, indent=2))
     else:
-        print(format_text(results))
+        print(format_text(results, selected_tags=args.tag, selected_ids=args.case_id))
 
     if args.fail_on_error and failed > 0:
         sys.exit(1)
