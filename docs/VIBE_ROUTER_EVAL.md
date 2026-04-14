@@ -6,6 +6,7 @@ This evaluation layer turns the router from a manually inspected helper into som
 ## Files
 - `tests/route_cases.json`: expected routing cases
 - `scripts/eval_router.py`: evaluator for `route_task.py`
+- `.github/workflows/router-eval.yml`: GitHub Actions workflow for regression checks
 
 ## Usage
 ### Text summary
@@ -23,6 +24,17 @@ python3 scripts/eval_router.py --format json
 python3 scripts/eval_router.py --fail-on-error
 ```
 
+## GitHub Actions
+This repository now runs router regression checks automatically on:
+- push to `main`
+- pull requests
+- manual workflow dispatch
+
+Workflow file:
+```text
+.github/workflows/router-eval.yml
+```
+
 ## What gets checked
 Each test case can assert:
 - `route_mode`
@@ -35,4 +47,4 @@ Each test case can assert:
 - `confirmation_reason_contains`
 
 ## Next step
-This can later be wired into GitHub Actions or any local pre-commit/pre-push workflow.
+A later phase can expand this into matrix testing, richer fixtures, snapshots, or PR annotations.

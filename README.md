@@ -12,6 +12,7 @@ CoPaw workspace integration for Vibe-Skills.
 - `scripts/eval_router.py` regression evaluator for router behavior
 - `config/vibe-routing.json` structured routing rules
 - `tests/route_cases.json` route regression cases
+- `.github/workflows/router-eval.yml` GitHub Actions workflow for router regression
 - `docs/VIBE_SKILLS_INTEGRATION.md`
 - `docs/VIBE_SKILLS_INDEX.md`
 - `docs/VIBE_SKILLS_ROUTING.md`
@@ -43,6 +44,17 @@ printf '%s\n%s\n' "先帮我理清需求，然后给一个实施方案" "打开�
 ```bash
 python3 scripts/eval_router.py
 python3 scripts/eval_router.py --fail-on-error
+```
+
+## CI
+GitHub Actions now runs router regression evaluation automatically on:
+- push to `main`
+- pull requests
+- manual dispatch
+
+Workflow:
+```text
+.github/workflows/router-eval.yml
 ```
 
 ## Router contract highlights
