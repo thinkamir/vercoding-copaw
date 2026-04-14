@@ -57,5 +57,18 @@ python3 scripts/route_task.py --format json --top 3 "帮我看一下 GitHub PR �
 - Always include fallback options so upper layers can degrade gracefully.
 - If the task text indicates risky write/destructive operations, set `requires_human_confirmation=true`.
 
+## Phase 20 follow-through
+This router is no longer only a planning bridge.
+
+It now feeds a real execution bridge through:
+- `config/execution-adapters.json`
+- `scripts/execute_routed_task.py`
+
+That means upper layers can now take `route_task.py` output and convert it into:
+- adapter selection
+- dispatch payloads
+- risk-gated execution decisions
+- preview or stub auto-dispatch
+
 ## Intended next step
-This file is the bridge toward plugging structured routing into a real CoPaw invocation chain.
+The next step after this is to connect `execute_routed_task.py` to a live CoPaw runtime host so adapter targets can invoke real skills directly.

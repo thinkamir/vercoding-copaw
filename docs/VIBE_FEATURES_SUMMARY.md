@@ -178,6 +178,20 @@ CI 现在会输出：
 - 风险确认门变化
 - case 增删
 
+### Phase 20：接入实际调用链的执行桥接层
+新增：
+- `config/execution-adapters.json`
+- `scripts/execute_routed_task.py`
+- `docs/VIBE_EXECUTION_CHAIN.md`
+
+支持把 `route_task.py` 的路由结果真正转成：
+- dispatch payload
+- adapter target
+- auto-dispatch / manual-handoff / blocked-confirmation 状态
+- preview / stub dispatch / 可选 shell execution
+
+这意味着仓库已经从“路由建议层”升级到“执行桥接层”。
+
 ---
 
 ## 当前核心脚本清单

@@ -1,0 +1,162 @@
+{
+  "version": 1,
+  "description": "Execution adapter mapping for routed CoPaw tasks. Converts route_task output into dispatchable execution targets.",
+  "vibe_wrappers": {
+    "Vibe Command - vibe": {
+      "adapter_type": "vibe_wrapper",
+      "dispatch_mode": "command_alias",
+      "command": "/vibe",
+      "supports_auto_dispatch": true,
+      "shell_command": null
+    },
+    "Vibe Command - vibe-do-it": {
+      "adapter_type": "vibe_wrapper",
+      "dispatch_mode": "command_alias",
+      "command": "vibe-do-it",
+      "supports_auto_dispatch": true,
+      "shell_command": null
+    },
+    "Vibe Command - vibe-how-do-we-do": {
+      "adapter_type": "vibe_wrapper",
+      "dispatch_mode": "command_alias",
+      "command": "vibe-how-do-we-do",
+      "supports_auto_dispatch": true,
+      "shell_command": null
+    },
+    "Vibe Command - vibe-implement": {
+      "adapter_type": "vibe_wrapper",
+      "dispatch_mode": "command_alias",
+      "command": "vibe-implement",
+      "supports_auto_dispatch": true,
+      "shell_command": null
+    },
+    "Vibe Command - vibe-review": {
+      "adapter_type": "vibe_wrapper",
+      "dispatch_mode": "command_alias",
+      "command": "vibe-review",
+      "supports_auto_dispatch": true,
+      "shell_command": null
+    },
+    "Vibe Command - vibe-what-do-i-want": {
+      "adapter_type": "vibe_wrapper",
+      "dispatch_mode": "command_alias",
+      "command": "vibe-what-do-i-want",
+      "supports_auto_dispatch": true,
+      "shell_command": null
+    },
+    "Vibe Skills": {
+      "adapter_type": "vibe_skill",
+      "dispatch_mode": "skill_name",
+      "command": null,
+      "supports_auto_dispatch": false,
+      "shell_command": null
+    },
+    "Vibe Core - Brainstorming": {
+      "adapter_type": "vibe_skill",
+      "dispatch_mode": "skill_name",
+      "command": null,
+      "supports_auto_dispatch": false,
+      "shell_command": null
+    },
+    "Vibe Core - Writing Plans": {
+      "adapter_type": "vibe_skill",
+      "dispatch_mode": "skill_name",
+      "command": null,
+      "supports_auto_dispatch": false,
+      "shell_command": null
+    },
+    "Vibe Core - Systematic Debugging": {
+      "adapter_type": "vibe_skill",
+      "dispatch_mode": "skill_name",
+      "command": null,
+      "supports_auto_dispatch": false,
+      "shell_command": null
+    },
+    "Vibe Core - Code Reviewer": {
+      "adapter_type": "vibe_skill",
+      "dispatch_mode": "skill_name",
+      "command": null,
+      "supports_auto_dispatch": false,
+      "shell_command": null
+    },
+    "Vibe Theme - AIOS Architect": {
+      "adapter_type": "vibe_skill",
+      "dispatch_mode": "skill_name",
+      "command": null,
+      "supports_auto_dispatch": false,
+      "shell_command": null
+    },
+    "Vibe Theme - Context Hunter": {
+      "adapter_type": "vibe_skill",
+      "dispatch_mode": "skill_name",
+      "command": null,
+      "supports_auto_dispatch": false,
+      "shell_command": null
+    },
+    "Vibe Theme - Create Plan": {
+      "adapter_type": "vibe_skill",
+      "dispatch_mode": "skill_name",
+      "command": null,
+      "supports_auto_dispatch": false,
+      "shell_command": null
+    },
+    "Vibe Theme - Build Error Resolver": {
+      "adapter_type": "vibe_skill",
+      "dispatch_mode": "skill_name",
+      "command": null,
+      "supports_auto_dispatch": false,
+      "shell_command": null
+    },
+    "Vibe Theme - Comprehensive Research": {
+      "adapter_type": "vibe_skill",
+      "dispatch_mode": "skill_name",
+      "command": null,
+      "supports_auto_dispatch": false,
+      "shell_command": null
+    },
+    "Vibe Theme - Autonomous Builder": {
+      "adapter_type": "vibe_skill",
+      "dispatch_mode": "skill_name",
+      "command": null,
+      "supports_auto_dispatch": false,
+      "shell_command": null
+    }
+  },
+  "native_families": {
+    "browser": {
+      "adapter_type": "native_copaw",
+      "dispatch_mode": "skill_family",
+      "tool_family": "browser/browser_use",
+      "supports_auto_dispatch": true,
+      "shell_command": null
+    },
+    "github": {
+      "adapter_type": "native_copaw",
+      "dispatch_mode": "skill_family",
+      "tool_family": "github",
+      "supports_auto_dispatch": true,
+      "shell_command": null
+    },
+    "web-search": {
+      "adapter_type": "native_copaw",
+      "dispatch_mode": "skill_family",
+      "tool_family": "web-search/tavily/duckduckgo-search",
+      "supports_auto_dispatch": true,
+      "shell_command": null
+    },
+    "cron": {
+      "adapter_type": "native_copaw",
+      "dispatch_mode": "skill_family",
+      "tool_family": "cron",
+      "supports_auto_dispatch": true,
+      "shell_command": null
+    },
+    "code": {
+      "adapter_type": "native_copaw",
+      "dispatch_mode": "skill_family",
+      "tool_family": "Code/Agentic Coding",
+      "supports_auto_dispatch": true,
+      "shell_command": null
+    }
+  }
+}
