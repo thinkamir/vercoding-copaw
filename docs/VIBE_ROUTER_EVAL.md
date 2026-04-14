@@ -115,5 +115,16 @@ Each test case can assert:
 - `min_confidence`
 - `confirmation_reason_contains`
 
+## Phase 19 additions
+Historical report diffing is now supported through:
+- `scripts/diff_router_reports.py`
+- `docs/VIBE_ROUTER_REPORT_DIFF.md`
+
+This adds report-to-report drift inspection for:
+- primary recommendation changes
+- confidence drift
+- risk gate changes
+- added / removed cases
+
 ## Next step
-A later phase can add report diffing, historical baselines, snapshots, route drift reports, or PR annotations.
+A later phase can add fixed baselines, CI diff artifacts, snapshots, or PR annotations.
