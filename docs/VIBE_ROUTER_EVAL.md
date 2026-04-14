@@ -8,6 +8,18 @@ This evaluation layer turns the router from a manually inspected helper into som
 - `scripts/eval_router.py`: evaluator for `route_task.py`
 - `.github/workflows/router-eval.yml`: GitHub Actions workflow for regression checks
 
+## Coverage focus
+Phase 15 expands coverage beyond smoke tests. The suite now targets:
+- 中文表达与中英混合表达
+- clarify / plan / build 冲突场景
+- debug / build 冲突场景
+- native browser / github / search / cron / code 路由
+- 高风险确认门
+- 边界与低置信输入
+
+Current suite size:
+- `24` route cases
+
 ## Usage
 ### Text summary
 ```bash
@@ -47,4 +59,4 @@ Each test case can assert:
 - `confirmation_reason_contains`
 
 ## Next step
-A later phase can expand this into matrix testing, richer fixtures, snapshots, or PR annotations.
+A later phase can add fixture grouping, tags, snapshots, route drift reports, or PR annotations.

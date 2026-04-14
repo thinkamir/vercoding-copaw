@@ -11,6 +11,128 @@
     }
   },
   {
+    "id": "clarify-freeze-scope",
+    "input": "我还没想清楚，先帮我冻结范围再说",
+    "expect": {
+      "route_mode": "vibe",
+      "primary_name": "Vibe Command - vibe-what-do-i-want",
+      "requires_human_confirmation": false,
+      "min_confidence": 0.8
+    }
+  },
+  {
+    "id": "plan-only",
+    "input": "先给计划，不要直接实现",
+    "expect": {
+      "route_mode": "vibe",
+      "primary_name": "Vibe Theme - Create Plan",
+      "requires_human_confirmation": false,
+      "min_confidence": 0.7
+    }
+  },
+  {
+    "id": "how-do-we-do",
+    "input": "先看怎么做，给我一个实施路径",
+    "expect": {
+      "route_mode": "vibe",
+      "primary_name": "Vibe Command - vibe-how-do-we-do",
+      "min_confidence": 0.7
+    }
+  },
+  {
+    "id": "direct-build-wrapper",
+    "input": "按方案推进，直接干",
+    "expect": {
+      "route_mode": "vibe",
+      "primary_name": "Vibe Command - vibe-do-it",
+      "can_auto_execute": true,
+      "min_confidence": 0.7
+    }
+  },
+  {
+    "id": "implement-wrapper",
+    "input": "开始实现，按这个计划写",
+    "expect": {
+      "route_mode": "vibe",
+      "primary_name": "Vibe Command - vibe-implement",
+      "min_confidence": 0.7
+    }
+  },
+  {
+    "id": "brainstorming-tradeoff",
+    "input": "有几个方案，先做个 trade-off 比较",
+    "expect": {
+      "route_mode": "vibe",
+      "primary_name": "Vibe Core - Brainstorming",
+      "min_confidence": 0.7
+    }
+  },
+  {
+    "id": "debug-root-cause",
+    "input": "这个项目构建失败了，先定位根因，不要直接拍脑袋修",
+    "expect": {
+      "route_mode": "vibe",
+      "primary_name": "Vibe Core - Systematic Debugging",
+      "min_confidence": 0.75
+    }
+  },
+  {
+    "id": "build-error-resolver",
+    "input": "构建失败，出现编译错误和依赖问题，先处理环境问题",
+    "expect": {
+      "route_mode": "vibe",
+      "primary_name": "Vibe Theme - Build Error Resolver",
+      "min_confidence": 0.7
+    }
+  },
+  {
+    "id": "review-first",
+    "input": "先别实现，先 review 一下这个 diff 的风险",
+    "expect": {
+      "route_mode": "vibe",
+      "primary_name_contains": "review",
+      "requires_human_confirmation": false,
+      "min_confidence": 0.7
+    }
+  },
+  {
+    "id": "context-hunter",
+    "input": "先看代码库模式，找类似实现和仓库约定",
+    "expect": {
+      "route_mode": "vibe",
+      "primary_name": "Vibe Theme - Context Hunter",
+      "min_confidence": 0.7
+    }
+  },
+  {
+    "id": "aios-architect",
+    "input": "这个需求先做架构和技术选型，再给 API 设计",
+    "expect": {
+      "route_mode": "vibe",
+      "primary_name": "Vibe Theme - AIOS Architect",
+      "min_confidence": 0.7
+    }
+  },
+  {
+    "id": "comprehensive-research",
+    "input": "先做调研，交叉验证一下多来源资料",
+    "expect": {
+      "route_mode": "vibe",
+      "primary_name": "Vibe Theme - Comprehensive Research",
+      "min_confidence": 0.68
+    }
+  },
+  {
+    "id": "autonomous-builder",
+    "input": "这个需求我已经确定了，你直接端到端开发，持续推进到完成",
+    "expect": {
+      "route_mode": "vibe",
+      "primary_name": "Vibe Theme - Autonomous Builder",
+      "can_auto_execute": true,
+      "min_confidence": 0.7
+    }
+  },
+  {
     "id": "browser-native",
     "input": "打开网页并截图，顺便点一下按钮",
     "expect": {
@@ -34,13 +156,36 @@
     }
   },
   {
-    "id": "review-first",
-    "input": "先别实现，先 review 一下这个 diff 的风险",
+    "id": "search-native",
+    "input": "帮我搜索一下这个技术方案的最新资料",
     "expect": {
-      "route_mode": "vibe",
-      "primary_name_contains": "review",
+      "route_mode": "native_copaw_first",
+      "primary_name": "web-search",
+      "primary_type": "native_copaw",
       "requires_human_confirmation": false,
-      "min_confidence": 0.7
+      "min_confidence": 0.75
+    }
+  },
+  {
+    "id": "cron-native",
+    "input": "帮我做一个每天早上 9 点的 cron 提醒",
+    "expect": {
+      "route_mode": "native_copaw_first",
+      "primary_name": "cron",
+      "primary_type": "native_copaw",
+      "requires_human_confirmation": false,
+      "min_confidence": 0.75
+    }
+  },
+  {
+    "id": "coding-mixed-native",
+    "input": "帮我写代码修这个 bug 并补测试",
+    "expect": {
+      "route_mode": "native_copaw_first",
+      "primary_name": "code",
+      "primary_type": "native_copaw",
+      "requires_human_confirmation": false,
+      "min_confidence": 0.75
     }
   },
   {
@@ -52,6 +197,40 @@
       "requires_human_confirmation": true,
       "can_auto_execute": false,
       "confirmation_reason_contains": ["force push", "deploy"]
+    }
+  },
+  {
+    "id": "risky-send-email",
+    "input": "帮我群发邮件给客户并直接发送",
+    "expect": {
+      "requires_human_confirmation": true,
+      "can_auto_execute": false,
+      "confirmation_reason_contains": ["发送邮件", "群发"]
+    }
+  },
+  {
+    "id": "risky-drop-db",
+    "input": "请直接 drop database 然后重建测试环境",
+    "expect": {
+      "requires_human_confirmation": true,
+      "can_auto_execute": false,
+      "confirmation_reason_contains": ["drop database"]
+    }
+  },
+  {
+    "id": "minimal-unclear",
+    "input": "你看着办",
+    "expect": {
+      "can_auto_execute": false,
+      "min_confidence": 0.3
+    }
+  },
+  {
+    "id": "single-command-explain-only",
+    "input": "只解释一下这个命令是什么意思",
+    "expect": {
+      "can_auto_execute": false,
+      "min_confidence": 0.3
     }
   }
 ]

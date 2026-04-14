@@ -47,6 +47,8 @@ def estimate_confidence(mode, payload):
 def should_require_human_confirmation(text, mode, primary):
     text_l = text.lower()
     risky = [hint for hint in HUMAN_CONFIRMATION_HINTS if hint.lower() in text_l]
+    if '发送' in text and '邮件' in text and '发送邮件' not in risky:
+        risky.append('发送邮件')
     requires = bool(risky)
     if primary and primary.get('type') == 'native_copaw' and primary.get('name') in {'github'}:
         if 'push' in text_l or 'merge' in text_l:

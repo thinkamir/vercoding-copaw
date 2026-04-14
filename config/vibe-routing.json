@@ -45,7 +45,7 @@
       {"skill": "Vibe Theme - Context Hunter", "priority": 89, "keywords": ["看代码库模式", "找类似实现", "仓库约定", "命名规范", "schema 约定"], "intent_boosts": ["plan", "debug"]},
       {"skill": "Vibe Theme - Build Error Resolver", "priority": 91, "keywords": ["构建失败", "编译错误", "lint错误", "依赖问题", "环境问题"], "intent_boosts": ["debug"]},
       {"skill": "Vibe Theme - Comprehensive Research", "priority": 87, "keywords": ["调研", "研究", "多来源", "交叉验证", "资料汇总"], "intent_boosts": ["plan"]},
-      {"skill": "Vibe Theme - Autonomous Builder", "priority": 91, "keywords": ["持续开发", "连续推进", "端到端开发", "自动开发", "从需求到实现"], "negative_keywords": ["需求还不清楚", "先别实现"], "intent_boosts": ["build"]}
+      {"skill": "Vibe Theme - Autonomous Builder", "priority": 91, "keywords": ["持续开发", "连续推进", "端到端开发", "自动开发", "从需求到实现", "持续推进到完成", "需求已确定"], "negative_keywords": ["需求还不清楚", "先别实现"], "intent_boosts": ["build"]}
     ]
   },
   "dedup": {

@@ -46,6 +46,9 @@ python3 scripts/eval_router.py
 python3 scripts/eval_router.py --fail-on-error
 ```
 
+Current regression suite size:
+- `24` route cases
+
 ## CI
 GitHub Actions now runs router regression evaluation automatically on:
 - push to `main`
