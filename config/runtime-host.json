@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "description": "Runtime host config for routed task execution. Defines handlers used by the local host dispatcher.",
+  "default_timeout": 30,
+  "handlers": {
+    "vibe_wrapper": {
+      "handler_type": "command_alias_host",
+      "supports_shell_execution": false,
+      "command_template": null
+    },
+    "vibe_skill": {
+      "handler_type": "skill_name_host",
+      "supports_shell_execution": false,
+      "command_template": null
+    },
+    "native_copaw": {
+      "handler_type": "native_family_host",
+      "supports_shell_execution": false,
+      "command_template": null
+    }
+  }
+}

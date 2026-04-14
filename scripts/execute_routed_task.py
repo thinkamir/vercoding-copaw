@@ -1,19 +1,20 @@
 #!/usr/bin/env python3
 import argparse
 import json
-import subprocess
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS_DIR = ROOT / 'scripts'
-CONFIG = ROOT / 'config' / 'execution-adapters.json'
+ADAPTER_CONFIG = ROOT / 'config' / 'execution-adapters.json'
+RUNTIME_CONFIG = ROOT / 'config' / 'runtime-host.json'
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 
 from route_task import build_route  # noqa: E402
+from runtime_host import dispatch_result, load_config as load_runtime_config  # noqa: E402
 
-SCHEMA_VERSION = '1.0.0'
+SCHEMA_VERSION = '1.1.0'
 
 
 def load_adapters(path):
@@ -101,74 +102,38 @@ def build_dispatch(route, adapter):
     }
 
 
-def maybe_execute(dispatch, shell_execute=False, timeout=30):
-    status = dispatch.get('dispatch_status')
-    adapter = dispatch.get('adapter') or {}
-
-    if status != 'ready_for_auto_dispatch':
-        return {
-            'executed': False,
-            'execution_status': 'not_executed',
-            'details': 'Dispatch is not in auto-dispatchable state.',
-        }
-
-    if not shell_execute:
-        return {
-            'executed': True,
-            'execution_status': 'dispatched_stub',
-            'details': 'Auto-dispatch eligible. Returned a dispatch stub without invoking external runtime.',
-        }
-
-    shell_command = adapter.get('shell_command')
-    if not shell_command:
-        return {
-            'executed': False,
-            'execution_status': 'shell_command_missing',
-            'details': 'shell_execute was requested but no shell_command is configured for this adapter.',
-        }
-
-    try:
-        completed = subprocess.run(
-            shell_command,
-            shell=True,
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-        )
-        return {
-            'executed': completed.returncode == 0,
-            'execution_status': 'shell_executed' if completed.returncode == 0 else 'shell_failed',
-            'details': {
-                'returncode': completed.returncode,
-                'stdout': completed.stdout,
-                'stderr': completed.stderr,
-            },
-        }
-    except subprocess.TimeoutExpired:
-        return {
-            'executed': False,
-            'execution_status': 'shell_timeout',
-            'details': f'Shell execution timed out after {timeout}s.',
-        }
-
-
-def build_result(text, top_n, adapters, execute=False, shell_execute=False, timeout=30):
+def build_result(text, top_n, adapters, execute=False, runtime_config=None, allow_shell_execute=False, timeout=30):
     route = build_route(text, top_n)
     adapter = get_adapter(route, adapters)
     dispatch = build_dispatch(route, adapter)
-    execution = maybe_execute(dispatch, shell_execute=shell_execute, timeout=timeout) if execute else {
-        'executed': False,
-        'execution_status': 'preview_only',
-        'details': 'Execution not requested. This is a preview of the dispatch chain.',
-    }
-
-    return {
+    result = {
         'schema_version': SCHEMA_VERSION,
         'input': text,
         'route': route,
         'dispatch': dispatch,
-        'execution': execution,
     }
+
+    if execute:
+        host_result = dispatch_result(
+            result,
+            runtime_config or {},
+            allow_shell_execute=allow_shell_execute,
+            timeout=timeout,
+        )
+        execution = {
+            'executed': bool(host_result.get('accepted')),
+            'execution_status': host_result.get('host_status'),
+            'details': host_result,
+        }
+    else:
+        execution = {
+            'executed': False,
+            'execution_status': 'preview_only',
+            'details': 'Execution not requested. This is a preview of the dispatch chain.',
+        }
+
+    result['execution'] = execution
+    return result
 
 
 def format_text(result):
@@ -211,10 +176,11 @@ def parse_args():
     parser.add_argument('text', nargs='*', help='Task text. If omitted, stdin will be used.')
     parser.add_argument('--top', type=int, default=5, help='Number of top Vibe recommendations to inspect.')
     parser.add_argument('--format', choices=['json', 'text'], default='json', help='Output format.')
-    parser.add_argument('--adapters', default=str(CONFIG), help='Path to execution adapter config.')
-    parser.add_argument('--execute', action='store_true', help='Attempt to execute the dispatch chain after routing.')
-    parser.add_argument('--shell-execute', action='store_true', help='Actually run adapter shell_command if configured. Use with care.')
-    parser.add_argument('--timeout', type=int, default=30, help='Shell execution timeout in seconds.')
+    parser.add_argument('--adapters', default=str(ADAPTER_CONFIG), help='Path to execution adapter config.')
+    parser.add_argument('--runtime-config', default=str(RUNTIME_CONFIG), help='Path to runtime host config.')
+    parser.add_argument('--execute', action='store_true', help='Send auto-dispatchable routes into the local runtime host.')
+    parser.add_argument('--shell-execute', action='store_true', help='Allow runtime host shell execution if configured. Use with care.')
+    parser.add_argument('--timeout', type=int, default=30, help='Runtime host timeout in seconds.')
     parser.add_argument('--output', help='Optional file path to write the final execution payload.')
     parser.add_argument('--output-format', choices=['json', 'text', 'match-console'], default='match-console', help='Output file format.')
     return parser.parse_args()
@@ -234,12 +200,14 @@ def main():
         sys.exit(1)
 
     adapters = load_adapters(args.adapters)
+    runtime_config = load_runtime_config(args.runtime_config)
     result = build_result(
         text,
         max(1, args.top),
         adapters,
         execute=args.execute,
-        shell_execute=args.shell_execute,
+        runtime_config=runtime_config,
+        allow_shell_execute=args.shell_execute,
         timeout=args.timeout,
     )
 

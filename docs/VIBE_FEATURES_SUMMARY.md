@@ -192,6 +192,21 @@ CI 现在会输出：
 
 这意味着仓库已经从“路由建议层”升级到“执行桥接层”。
 
+### Phase 21：引入 runtime host 宿主分发层
+新增：
+- `config/runtime-host.json`
+- `scripts/runtime_host.py`
+- `docs/VIBE_RUNTIME_HOST.md`
+
+支持把执行桥接结果继续送入统一宿主层，由 host 负责：
+- auto-dispatch 校验
+- adapter_type -> handler 映射
+- invocation payload 规范化
+- host-level dispatch result 输出
+- 可选 handler shell execution
+
+这意味着仓库已进一步从“执行桥接层”升级到“runtime host 宿主层”。
+
 ---
 
 ## 当前核心脚本清单
